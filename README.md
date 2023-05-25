@@ -25,7 +25,6 @@ Please visit my YouTube channel: [Practical Programming with Dr. Xu](https://www
 <br />
 
 ### Video Series for WebGPU by Examples:
-<br />
 
 1. Introduction: https://youtu.be/PwKjAlZfiwY
 
