@@ -45,7 +45,7 @@ The following steps shows how to run the sample apps:
 
 <br />
 
-## Sample Objects 
+## Sample Projects 
 Here are some sample objects created using the WebGPU API, which I will discussed in my video series.
 
 ### Gravity on a 2D Grid (attraction):
