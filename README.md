@@ -1,7 +1,5 @@
 <!---$$\textcolor{red}{\text{The source code has just been updated to WebGPU version 0.1.31.}}$$--->
 
-test
-
 # WebGPU by Examples: New Video Series on WebGPU
 
 WebGPU is a new web graphics API that offers significant benefits over its predecessor, WebGL. WebGPU is designed to provide modern low-overhead graphics and compute capabilities on the web platform. This means that web developers can create more complex and realistic 3D graphics in web applications without having to worry about performance issues.
