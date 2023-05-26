@@ -20,7 +20,7 @@ Most examples used in this new video series are taken from my recently published
 
 ## YouTube Video Links and Live Demos:
 
-Please visit my YouTube channel: [Practical Programming with Dr. Xu](https://www.youtube.com/c/PracticalProgrammingWithDrXu) and view the [live demos](https://webgpu-gpu-book.drxudotnet.com)github
+Please visit my YouTube channel: [Practical Programming with Dr. Xu](https://www.youtube.com/c/PracticalProgrammingWithDrXu) and view the [live demos](https://webgpu-gpu-book.drxudotnet.com).
 
 <br />
 
