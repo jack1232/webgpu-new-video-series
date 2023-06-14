@@ -1,3 +1,52 @@
+import { vec3 } from 'gl-matrix';
+const pi = 3.1415926;
+
+const sin = (x:number) => Math.sin(x);
+const cos = (x:number) => Math.cos(x);
+
+const getSpherePosition = (radius:number, theta:number, phi:number): vec3 => {
+    let x = radius * sin(theta) * cos(phi);
+    let y = radius * cos(theta);
+    let z = -radius * sin(theta) * sin(phi);    
+    return vec3.fromValues(x, y, z);     
+}
+
+export const getSphereData = (radius:number, u:number, v:number) => {
+    if(u < 2 || v < 2) return;
+    let pts = [], normals = [], uvs = [];
+    for(let i = 0; i <= u; i++){
+        for(let j = 0; j <= v; j++){
+            let pt = getSpherePosition(radius, i*pi/u, j*2*pi/v);
+            pts.push(pt[0], pt[1], pt[2]);
+            normals.push(pt[0]/radius, pt[1]/radius, pt[2]/radius);
+            uvs.push(i/u, j/v);
+        }
+    }
+
+    let vertices_per_row = v + 1;
+    let indices = [];
+    let indices2 = [];
+
+    for(let i = 0; i < u; i++){
+        for(let j = 0; j < v; j++) {
+            let idx0 = j + i * vertices_per_row;
+            let idx1 = j + 1 + i * vertices_per_row;
+            let idx2 = j + 1 + (i + 1) * vertices_per_row;
+            let idx3 = j + (i + 1) * vertices_per_row; 
+
+            indices.push(idx0, idx1, idx2, idx2, idx3, idx0);          
+            indices2.push(idx0, idx1, idx0, idx3);      
+        }
+    }
+    return {
+        positions: new Float32Array(pts),
+        normals: new Float32Array(normals),
+        uvs: new Float32Array(uvs),
+        indices: new Uint32Array(indices),
+        indices2: new Uint32Array(indices2),
+    };
+}
+
 export const getCubeData = (side = 2, uLength = 1, vLength = 1) => {
     let s2 = side / 2;
     let positions = new Float32Array([

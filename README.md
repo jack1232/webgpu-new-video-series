@@ -29,6 +29,7 @@ Please visit my YouTube channel: [Practical Programming with Dr. Xu](https://www
 1. Introduction: https://youtu.be/PwKjAlZfiwY
 2. Starter Template: https://youtu.be/3EKicuZjMdY
 3. WebGPU-Simplified Package: https://youtu.be/4WVFzyamY74
+4. Update GPU Buffers: https://youtu.be/GifrQxEOEA4
 
 
 <br />
