@@ -30,6 +30,8 @@ Please visit my YouTube channel: [Practical Programming with Dr. Xu](https://www
 2. Starter Template: https://youtu.be/3EKicuZjMdY
 3. WebGPU-Simplified Package: https://youtu.be/4WVFzyamY74
 4. Update GPU Buffers: https://youtu.be/GifrQxEOEA4
+5. Blinn-Phong Light Model: https://youtu.be/7aAZRuesaak
+6. Point Light Model: https://youtu.be/1_rjiatj1IM
 
 
 <br />
