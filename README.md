@@ -32,6 +32,7 @@ Please visit my YouTube channel: [Practical Programming with Dr. Xu](https://www
 4. Update GPU Buffers: https://youtu.be/GifrQxEOEA4
 5. Blinn-Phong Light Model: https://youtu.be/7aAZRuesaak
 6. Point Light Model: https://youtu.be/1_rjiatj1IM
+7. Spotlight Model: https://youtu.be/bGkphueppOI
 
 <br />
 

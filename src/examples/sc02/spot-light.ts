@@ -1,5 +1,5 @@
 import vert_shader from './shader-instance-vert.wgsl';
-import frag_shader from './point-frag.wgsl';
+import frag_shader from './spot-frag.wgsl';
 import * as ws from  'webgpu-simplified';
 import { vec3, mat4 } from 'gl-matrix';
 import { getCubeData, getSphereData } from '../../common/vertex-data';
@@ -28,14 +28,14 @@ const createPipeline = async (init:ws.IWebGPUInit, data:any, numObjects:number):
     // uniform and storage buffers for transform matrix
     const vpUniformBuffer = ws.createBuffer(init.device, 64);
     const modelUniformBuffer = ws.createBuffer(init.device, 64 * numObjects, ws.BufferType.Storage);
-    const normalUniformBuffer = ws.createBuffer(init.device, 64 * numObjects, ws.BufferType.Storage); 
+    const normalUniformBuffer = ws.createBuffer(init.device, 64 * numObjects, ws.BufferType.Storage);
     const colorUniformBuffer = ws.createBuffer(init.device, 16 * numObjects, ws.BufferType.Storage);
 
     // uniform buffer for light 
     const lightUniformBuffer = ws.createBuffer(init.device, 64);
 
     // uniform buffer for material
-    const materialUniformBuffer = ws.createBuffer(init.device, 28);   
+    const materialUniformBuffer = ws.createBuffer(init.device, 32);   
 
     // uniform bind group for vertex shader
     const vertBindGroup = ws.createBindGroup(init.device, pipeline.getBindGroupLayout(0), 
@@ -123,11 +123,14 @@ const run = async () => {
 
     var camera = ws.getCamera(canvas, vt.cameraOptions);
     let eyePosition = new Float32Array(vt.cameraOptions.eye);
+    let lightDirection = new Float32Array([-2, -2, -4]);
     let lightPosition = eyePosition;
     
     // write light parameters to buffer 
     init.device.queue.writeBuffer(p.uniformBuffers[4], 0, lightPosition);
-    init.device.queue.writeBuffer(p.uniformBuffers[4], 16, eyePosition);
+    init.device.queue.writeBuffer(p.uniformBuffers[4], 16, lightDirection);
+    init.device.queue.writeBuffer(p.uniformBuffers[4], 32, eyePosition);
+
 
     var gui = ws.getDatGui();
     document.querySelector('#gui').append(gui.domElement);
@@ -138,8 +141,9 @@ const run = async () => {
         diffuse: 0.7,
         specular: 0.4,
         shininess: 30,
-        linear: 0.4,
+        linear: 0.3,
         quadratic: 0.3,
+        cutoff: 15,
     };
     
     gui.add(params, 'animateSpeed', 0, 5, 0.01);      
@@ -153,8 +157,9 @@ const run = async () => {
 
     folder = gui.addFolder('Set Point-light attenuation');
     folder.open();
-    folder.add(params, 'linear', 0, 5, 0.02);  
-    folder.add(params, 'quadratic', 0, 5, 0.02);  
+    folder.add(params, 'linear', 0, 2, 0.02);  
+    folder.add(params, 'quadratic', 0, 3, 0.03);  
+    folder.add(params, 'cutoff', 0, 90, 0.5);
 
     const mMat = new Float32Array(16 * numObjects);
     const nMat = new Float32Array(16 * numObjects);
@@ -182,10 +187,9 @@ const run = async () => {
             viewMat = camera.matrix;
             vpMat = ws.combineVpMat(viewMat, projectMat);
             eyePosition = new Float32Array(camera.eye.flat());
-            lightPosition = eyePosition;
             init.device.queue.writeBuffer(p.uniformBuffers[0], 0, vpMat as ArrayBuffer);
-            init.device.queue.writeBuffer(p.uniformBuffers[4], 0, lightPosition);
-            init.device.queue.writeBuffer(p.uniformBuffers[4], 16, eyePosition);
+            init.device.queue.writeBuffer(p.uniformBuffers[4], 0, eyePosition);
+            init.device.queue.writeBuffer(p.uniformBuffers[4], 32, eyePosition);
         }
        
         // update uniform buffers for transformation 
@@ -194,15 +198,14 @@ const run = async () => {
 
         // update uniform buffers for light direction and colors
         let dt = (performance.now() - start)/1000;
-        let sn = 10 * Math.sin(params.animateSpeed*dt);
-        let cn = 10 * Math.cos(params.animateSpeed*dt);        
-        let cn1 = 10*(1+Math.cos(2*params.animateSpeed*dt));
-        init.device.queue.writeBuffer(p.uniformBuffers[4], 0, Float32Array.of(4*sn, 4*cn, 8*cn1));
-        init.device.queue.writeBuffer(p.uniformBuffers[4], 32, ws.hex2rgb(params.specularColor));
+        let sn = 8 * Math.sin(params.animateSpeed*dt);
+        let cn = 8 * Math.cos(params.animateSpeed*dt);        
+        init.device.queue.writeBuffer(p.uniformBuffers[4], 0, Float32Array.of(sn, cn, 1));
+        init.device.queue.writeBuffer(p.uniformBuffers[4], 48, ws.hex2rgb(params.specularColor));
 
         // update material uniform buffer
         init.device.queue.writeBuffer(p.uniformBuffers[5], 0, Float32Array.of(
-            params.ambient, params.diffuse, params.specular, params.shininess, 1.0, params.linear, params.quadratic
+            params.ambient, params.diffuse, params.specular, params.shininess, 1.0, params.linear, params.quadratic, params.cutoff
         ));
 
         const numShapes = {
