@@ -4,6 +4,70 @@ const pi = 3.1415926;
 const sin = (x:number) => Math.sin(x);
 const cos = (x:number) => Math.cos(x);
 
+const getTorusPosition = (R:number, r:number, u:number, v:number) => {
+    let x = (R + r*cos(v)) * cos(u);
+    let y = r * sin(v);
+    let z = -(R + r*cos(v)) * sin(u);
+    return vec3.fromValues(x, y, z);       
+}
+
+export const getTorusData = (rlarge:number, rsmall:number, u:number, v:number) => {
+    if(u < 2 || v < 2) return;
+    let pts = [];
+    let normals = [];
+    let eps = 0.01 * 2*pi/v;
+    let p0:vec3, p1:vec3, p2:vec3, p3:vec3;
+    for(let i = 0; i <= u; i++){
+        let du = i*2*pi/u;
+        for(let j = 0; j <= v; j++){
+            let dv = j*2*pi/v;
+            p0 = getTorusPosition(rlarge, rsmall, du, dv);
+            pts.push(p0[0], p0[1], p0[2]);
+
+            // calculate normals
+            if(du-eps >= 0) {
+                p1 = getTorusPosition(rlarge, rsmall, du-eps, dv);
+                p2 = vec3.subtract(vec3.create(), p0, p1);
+            } else {
+                p1 = getTorusPosition(rlarge, rsmall, du+eps, dv);
+                p2 = vec3.subtract(vec3.create(), p1, p0);
+            }
+            if(dv-eps >= 0) {
+                p1 = getTorusPosition(rlarge, rsmall, du, dv-eps);
+                p3 = vec3.subtract(vec3.create(), p0, p1);
+            } else {
+                p1 = getTorusPosition(rlarge, rsmall, du, dv+eps);
+                p3 = vec3.subtract(vec3.create(), p1, p0);
+            }
+            let normal = vec3.cross(vec3.create(), p3, p2);
+            vec3.normalize(normal, normal);
+            normals.push(normal[0], normal[1], normal[2]);
+        }
+    }
+
+    let n_vertices_per_row = v + 1;
+    let indices = [];
+    let indices2 = [];
+
+    for(let i = 0; i < u; i++){
+        for(let j = 0; j < v; j++) {
+            let idx0 = j + i * n_vertices_per_row;
+            let idx1 = j + 1 + i * n_vertices_per_row;
+            let idx2 = j + 1 + (i + 1) * n_vertices_per_row;
+            let idx3 = j + (i + 1) * n_vertices_per_row; 
+
+            indices.push(idx0, idx1, idx2, idx2, idx3, idx0);          
+            indices2.push(idx0, idx1, idx0, idx3);      
+        }
+    }
+    return {
+        positions: new Float32Array(pts),
+        normals: new Float32Array(normals),
+        indices: new Uint32Array(indices),
+        indices2: new Uint32Array(indices2),
+    };
+}
+
 const getSpherePosition = (radius:number, theta:number, phi:number): vec3 => {
     let x = radius * sin(theta) * cos(phi);
     let y = radius * cos(theta);

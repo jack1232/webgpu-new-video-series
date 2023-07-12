@@ -33,6 +33,7 @@ Please visit my YouTube channel: [Practical Programming with Dr. Xu](https://www
 5. Blinn-Phong Light Model: https://youtu.be/7aAZRuesaak
 6. Point Light Model: https://youtu.be/1_rjiatj1IM
 7. Spotlight Model: https://youtu.be/bGkphueppOI
+8. Shadow Mapping: https://youtu.be/WwKH0M87PZ8
 
 <br />
 
